@@ -3,16 +3,15 @@ import { useState } from 'react'
 import axios from 'axios'
 import ProgressSteps from '../components/ProgressSteps'
 
+const BASE_URL = 'https://ai-resume-analyzer-vayd.onrender.com'
+
 export default function Analysis() {
   const { state } = useLocation()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  if (!state?.result) {
-    navigate('/')
-    return null
-  }
+  if (!state?.result) { navigate('/'); return null }
 
   const { result, jobRole } = state
 
@@ -34,10 +33,11 @@ export default function Analysis() {
     setLoading(true)
     setError('')
     try {
-      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/questions', { jobRole })
+      const { data } = await axios.post(BASE_URL + '/questions', { jobRole })
       navigate('/questions', { state: { questions: data, jobRole } })
     } catch (err) {
       setError('Failed to generate questions. Please try again.')
+      console.error(err)
     }
     setLoading(false)
   }
@@ -66,7 +66,6 @@ export default function Analysis() {
 
         {error && <div className="error-msg">⚠️ {error}</div>}
 
-        {/* Score */}
         <div className="score-section">
           <div className="score-circle">
             <span className="score-number">{result.score}</span>
@@ -78,7 +77,6 @@ export default function Analysis() {
           </div>
         </div>
 
-        {/* Strengths */}
         <div className="card">
           <div className="feedback-section">
             <h3>🟢 Strengths</h3>
@@ -88,9 +86,7 @@ export default function Analysis() {
               ))}
             </ul>
           </div>
-
           <hr />
-
           <div className="feedback-section">
             <h3>🔴 Weaknesses</h3>
             <ul className="feedback-list weaknesses">
@@ -99,9 +95,7 @@ export default function Analysis() {
               ))}
             </ul>
           </div>
-
           <hr />
-
           <div className="feedback-section">
             <h3>💡 Suggestions</h3>
             <ul className="feedback-list suggestions">
@@ -113,12 +107,8 @@ export default function Analysis() {
         </div>
 
         <div className="btn-row">
-          <button className="btn btn-secondary" onClick={() => navigate('/')}>
-            ← Upload Again
-          </button>
-          <button className="btn btn-gold" onClick={handleGenerateQuestions}>
-            Generate Interview Questions →
-          </button>
+          <button className="btn btn-secondary" onClick={() => navigate('/')}>← Upload Again</button>
+          <button className="btn btn-gold" onClick={handleGenerateQuestions}>Generate Interview Questions →</button>
         </div>
       </div>
     </div>

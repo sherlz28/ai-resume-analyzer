@@ -3,6 +3,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import ProgressSteps from '../components/ProgressSteps'
 
+const BASE_URL = 'https://ai-resume-analyzer-vayd.onrender.com'
+
 export default function Questions() {
   const { state } = useLocation()
   const navigate = useNavigate()
@@ -14,7 +16,7 @@ export default function Questions() {
 
   const { questions, jobRole } = state
 
- const allQuestions = [
+  const allQuestions = [
     ...questions.technical.slice(0, 2).map(q => ({ q, type: 'technical' })),
     ...questions.hr.slice(0, 2).map(q => ({ q, type: 'hr' })),
     ...questions.skill.slice(0, 2).map(q => ({ q, type: 'skill' })),
@@ -22,16 +24,13 @@ export default function Questions() {
 
   const handleSubmit = async () => {
     const unanswered = allQuestions.filter((_, i) => !answers[i] || !answers[i].trim())
-    if (unanswered.length > 0) {
-      setError('Please answer all questions before submitting.')
-      return
-    }
+    if (unanswered.length > 0) { setError('Please answer all questions before submitting.'); return }
 
     setLoading(true)
     setError('')
 
     try {
-      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/evaluate', {
+      const { data } = await axios.post(BASE_URL + '/evaluate', {
         questions: allQuestions.map(q => q.q),
         answers: allQuestions.map((_, i) => answers[i] || ''),
         jobRole,
@@ -39,6 +38,7 @@ export default function Questions() {
       navigate('/feedback', { state: { feedback: data.feedback, jobRole, questions } })
     } catch (err) {
       setError('Evaluation failed. Please try again.')
+      console.error(err)
     }
     setLoading(false)
   }
@@ -79,9 +79,7 @@ export default function Questions() {
           return (
             <div className="card" key={key}>
               <div className="question-block">
-                <div className={`question-category ${className}`}>
-                  {emoji} {label} Questions
-                </div>
+                <div className={`question-category ${className}`}>{emoji} {label} Questions</div>
                 {catQuestions.map((item, idx) => {
                   const globalIdx = startIndex + idx
                   return (
@@ -102,12 +100,8 @@ export default function Questions() {
         })}
 
         <div className="btn-row">
-          <button className="btn btn-secondary" onClick={() => navigate('/analysis', { state: { result: state.result, jobRole } })}>
-            ← Back
-          </button>
-          <button className="btn btn-primary" onClick={handleSubmit}>
-            Submit Answers →
-          </button>
+          <button className="btn btn-secondary" onClick={() => navigate('/analysis', { state: { result: state.result, jobRole } })}>← Back</button>
+          <button className="btn btn-primary" onClick={handleSubmit}>Submit Answers →</button>
         </div>
       </div>
     </div>

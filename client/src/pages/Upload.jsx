@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import ProgressSteps from '../components/ProgressSteps'
 
+const BASE_URL = 'https://ai-resume-analyzer-vayd.onrender.com'
+
 const JOB_ROLES = [
   'Software Engineer',
   'Frontend Developer',
@@ -60,10 +62,11 @@ export default function Upload() {
     formData.append('jobRole', role)
 
     try {
-      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/analyze', formData)
+      const { data } = await axios.post(BASE_URL + '/analyze', formData)
       navigate('/analysis', { state: { result: data, jobRole: role } })
     } catch (err) {
-      setError('Analysis failed. Make sure the server is running.')
+      setError('Analysis failed. Please try again in a moment.')
+      console.error(err)
     }
     setLoading(false)
   }
