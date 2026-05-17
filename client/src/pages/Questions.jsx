@@ -31,7 +31,7 @@ export default function Questions() {
     setError('')
 
     try {
-      const { data } = await axios.post('http://localhost:5000/evaluate', {
+      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/evaluate', {
         questions: allQuestions.map(q => q.q),
         answers: allQuestions.map((_, i) => answers[i] || ''),
         jobRole,

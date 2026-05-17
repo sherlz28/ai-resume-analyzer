@@ -60,7 +60,7 @@ export default function Upload() {
     formData.append('jobRole', role)
 
     try {
-      const { data } = await axios.post('http://localhost:5000/analyze', formData)
+      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/analyze', formData)
       navigate('/analysis', { state: { result: data, jobRole: role } })
     } catch (err) {
       setError('Analysis failed. Make sure the server is running.')

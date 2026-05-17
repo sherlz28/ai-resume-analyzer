@@ -34,7 +34,7 @@ export default function Analysis() {
     setLoading(true)
     setError('')
     try {
-      const { data } = await axios.post('http://localhost:5000/questions', { jobRole })
+      const { data } = await axios.post('https://ai-resume-analyzer-server.onrender.com/questions', { jobRole })
       navigate('/questions', { state: { questions: data, jobRole } })
     } catch (err) {
       setError('Failed to generate questions. Please try again.')
